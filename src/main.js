@@ -9,7 +9,7 @@ import {iconsSet as icons} from './assets/icons/icons.js'
 Vue.config.performance = true
 Vue.use(CoreuiVue)
 
-const token = auth.getToken()
+const token = auth.getUser()
 if (token) {
     axios.defaults.headers.common['Authorization'] = token
 }

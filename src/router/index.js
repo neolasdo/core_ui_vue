@@ -14,7 +14,7 @@ import User from '../views/users/User'
 
 Vue.use(Router)
 
-export default new Router({
+let router =  new Router({
     mode: 'hash', // https://router.vuejs.org/api/#mode
     linkActiveClass: 'active',
     scrollBehavior: () => ({y: 0}),
@@ -26,7 +26,6 @@ function configRoutes() {
         {
             path: '/',
             redirect() {
-                console.log(auth.isAuthenticated())
                 return auth.isAuthenticated() ? '/admin' : '/login';
             },
             name: 'Home',
@@ -39,29 +38,43 @@ function configRoutes() {
                 {
                     path: '404',
                     name: 'Page404',
-                    component: Page404
+                    component: Page404,
+                    meta: {
+                        guest: true
+                    }
                 },
                 {
                     path: '500',
                     name: 'Page500',
-                    component: Page500
+                    component: Page500,
+                    meta: {
+                        guest: true
+                    }
                 },
                 {
                     path: 'login',
                     name: 'Login',
-                    component: Login
+                    component: Login,
+                    meta: {
+                        guest: true
+                    }
                 },
                 {
                     path: 'register',
                     name: 'Register',
-                    component: Register
+                    component: Register,
+                    meta: {
+                        guest: true
+                    }
                 },
                 {
                     path: '/admin',
                     redirect: '/admin/dashboard',
                     name: 'Backend',
                     component: TheContainer,
-                    beforeEach: ifAuthenticated,
+                    meta: {
+                        requiresAuth: true
+                    },
                     children: [
                         {
                             path: 'dashboard',
@@ -90,17 +103,36 @@ function configRoutes() {
                             ]
                         },
                     ]
+                },
+                {
+                    path: "*",
+                    component: PageNotFound
                 }
-            ]
+            ],
         },
     ]
 }
 
-
-const ifAuthenticated = (to, from, next) => {
-    if (auth.isAuthenticated()) {
+router.beforeEach((to, from, next) => {
+    if(to.matched.some(record => record.meta.requiresAuth)) {
+        if (auth.getUser() == null) {
+            next({
+                path: '/login',
+                params: { nextUrl: to.fullPath }
+            })
+        } else {
+            next()
+        }
+    } else if(to.matched.some(record => record.meta.guest)) {
+        if(auth.getUser() == null){
+            next()
+        }
+        else{
+            next({ name: 'Backend'})
+        }
+    }else {
         next()
-        return
     }
-    next('/login')
-}
+})
+
+export default router;

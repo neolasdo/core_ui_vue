@@ -2,24 +2,27 @@ import axios from 'axios';
 
 export default {
     isAuthenticated() {
-        if (this.getToken()) {
+        if (this.getUser()) {
             return true;
         }
         return false;
     },
     loginClient(username, password) {
-        let token = 'AKCGASGCIIUICKABYT3';
-        localStorage.setItem('user-token', token)
+        let user = {
+            username: username,
+            password: password
+        };
+        localStorage.setItem('user', JSON.stringify(user))
     },
-    removeToken() {
-        localStorage.removeItem('user-token')
+    removeUser() {
+        localStorage.removeItem('user')
     },
-    getToken() {
-        return localStorage.getItem('user-token');
+    getUser() {
+        return JSON.parse(localStorage.getItem('user'))
     },
     loginWithServer(user) {
         return new Promise((resolve, reject) => {
-            axios({url: 'auth', data: user, method: 'POST'})
+            axios({url: 'localhost:8080/auth', data: user, method: 'POST'})
                 .then(resp => {
                     const token = resp.data.token
                     localStorage.setItem('user-token', token)
