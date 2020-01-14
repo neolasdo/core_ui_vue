@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import auth from '../services/auth'
-
+import account from '../services/account'
 // Containers
 import TheContainer from '../containers/TheContainer'
 import Dashboard from '../views/Dashboard'
@@ -14,7 +13,7 @@ import User from '../views/users/User'
 
 Vue.use(Router)
 
-let router =  new Router({
+let router = new Router({
     mode: 'hash', // https://router.vuejs.org/api/#mode
     linkActiveClass: 'active',
     scrollBehavior: () => ({y: 0}),
@@ -26,7 +25,7 @@ function configRoutes() {
         {
             path: '/',
             redirect() {
-                return auth.isAuthenticated() ? '/admin' : '/login';
+                return !account.getters.isLoggedIn ? '/login' : '/admin';
             },
             name: 'Home',
             component: {
@@ -103,10 +102,6 @@ function configRoutes() {
                             ]
                         },
                     ]
-                },
-                {
-                    path: "*",
-                    component: PageNotFound
                 }
             ],
         },
@@ -115,7 +110,7 @@ function configRoutes() {
 
 router.beforeEach((to, from, next) => {
     if(to.matched.some(record => record.meta.requiresAuth)) {
-        if (auth.getUser() == null) {
+        if (!account.getters.isLoggedIn) {
             next({
                 path: '/login',
                 params: { nextUrl: to.fullPath }
@@ -124,7 +119,7 @@ router.beforeEach((to, from, next) => {
             next()
         }
     } else if(to.matched.some(record => record.meta.guest)) {
-        if(auth.getUser() == null){
+        if(!account.getters.isLoggedIn){
             next()
         }
         else{

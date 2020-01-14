@@ -5,7 +5,7 @@ export default [
       {
         _name: 'CSidebarNavItem',
         name: 'Dashboard',
-        to: '/dashboard',
+        to: '/admin/dashboard',
         icon: 'cil-speedometer',
       },
     ]

@@ -62,7 +62,6 @@
 </template>
 
 <script>
-    import auth from '../../services/auth';
     export default {
         name: 'Login',
         data() {
@@ -73,8 +72,17 @@
         },
         methods: {
             login() {
-                auth.loginClient(this.user, this.password);
-                this.$router.push({name: 'Backend'})
+                let user = {
+                    username: this.user,
+                    password: this.password
+                }
+                this.$store.dispatch('loginTest', user)
+                    .then((resolve) => {
+                        this.$router.push({name: 'Home'});
+                    }).catch((err) => {
+                        console.log(err)
+                    }
+                );
             }
         }
     }

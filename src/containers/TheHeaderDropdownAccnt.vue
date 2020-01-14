@@ -39,7 +39,6 @@
 </template>
 
 <script>
-    import auth from '../services/auth'
     export default {
         name: 'TheHeaderDropdownAccnt',
         data() {
@@ -49,8 +48,9 @@
         },
         methods: {
             logout() {
-                auth.removeUser();
-                this.$router.push({name: 'Home'})
+                this.$store.dispatch('logout').then(() => {
+                    this.$router.push({name: 'Home'})
+                })
             }
         }
     }

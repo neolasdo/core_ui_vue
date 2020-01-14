@@ -19,7 +19,7 @@
         />
         <CHeaderNav class="d-md-down-none mr-auto">
             <CHeaderNavItem class="px-3">
-                <CHeaderNavLink to="/dashboard">
+                <CHeaderNavLink to="/admin/dashboard">
                     Dashboard
                 </CHeaderNavLink>
             </CHeaderNavItem>
